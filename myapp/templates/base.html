@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>{% block title %}My App{% endblock %}</title>
+    {% include 'head.html' %}
+
+</head>
+
+<body class="skin-blue">
+    <div class="wrapper">
+
+        <header class="main-header">
+            <!-- Logo -->
+            <a href="index2.html" class="logo"><b>Admin</b>LTE</a>
+            <!-- Header Navbar: style can be found in header.less -->
+            {% include 'top_nav.html' %}
+        </header>
+    </div>
+
+
+    <!-- Left side column. contains the logo and sidebar -->
+
+    {% include 'side_nav.html' %}
+    <!-- Right side column. Contains the navbar and content of the page -->
+    {% block content %}{% endblock %}
+</body>
+{% include 'footer.html' %}
+
+</html>
