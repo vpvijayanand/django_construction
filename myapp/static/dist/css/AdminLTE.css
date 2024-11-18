@@ -567,6 +567,7 @@ a:focus {
 .dropdown-menu > li > a {
   color: #777;
 }
+
 .dropdown-menu > li > a > .glyphicon,
 .dropdown-menu > li > a > .fa,
 .dropdown-menu > li > a > .ion {
