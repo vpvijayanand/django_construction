@@ -37,3 +37,32 @@ def employee_type_delete(request, id):
         employee_type.delete()
         return JsonResponse({'success': True})
     return JsonResponse({'error': 'Invalid Request'}, status=400)
+
+
+# Vendor Type Views
+def vendor_type_list(request):
+    vendor_types = VendorType.objects.all()
+    return render(request, 'masters/vendor_Type_list.html', {'Vendor_Types': vendor_types})
+
+def vendor_type_create(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        vendor_type = VendorType.objects.create(name=name)
+        return JsonResponse({'id': vendor_type.id, 'name': vendor_type.name, 'created_at': vendor_type.created_at, 'updated_at': vendor_type.updated_at})
+    return JsonResponse({'error': 'Invalid Request'}, status=400)
+
+def vendor_type_update(request, id):
+    if request.method == 'POST':
+        vendor_type = get_object_or_404(VendorType, id=id)
+        name = request.POST.get('name')
+        vendor_type.name = name
+        vendor_type.save()
+        return JsonResponse({'id': vendor_type.id, 'name': vendor_type.name, 'created_at': vendor_type.created_at, 'updated_at': vendor_type.updated_at})
+    return JsonResponse({'error': 'Invalid Request'}, status=400)
+
+def vendor_type_delete(request, id):
+    if request.method == 'POST':
+        vendor_type = get_object_or_404(VendorType, id=id)
+        vendor_type.delete()
+        return JsonResponse({'success': True})
+    return JsonResponse({'error': 'Invalid Request'}, status=400)

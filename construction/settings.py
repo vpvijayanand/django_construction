@@ -81,11 +81,11 @@ WSGI_APPLICATION = 'construction.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'construction_new',       # Replace with your database name
+        'NAME': 'construction',       # Replace with your database name
         'USER': 'postgres',      # Replace with your database user
-        'PASSWORD': 'postgres',  # Replace with your user's password
+        'PASSWORD': 'gokul123',  # Replace with your user's password
         'HOST': 'localhost',          # Or the host where PostgreSQL is running
-        'PORT': '5432',  
+        'PORT': '5433',  
 }
 }
 
