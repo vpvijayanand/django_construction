@@ -1,101 +1,91 @@
 # masters/views.py
-"""
-from rest_framework import generics
-from django.shortcuts import render
-from .models import EmployeeType, VendorType
-from .serializers import EmployeeTypeSerializer, VendorTypeSerializer
-
-# EmployeeType Views
-class EmployeeTypeListCreate(generics.ListCreateAPIView):
-    queryset = EmployeeType.objects.all()
-    serializer_class = EmployeeTypeSerializer
-
-class EmployeeTypeRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
-    queryset = EmployeeType.objects.all()
-    serializer_class = EmployeeTypeSerializer
-
-# VendorType Views
-class VendorTypeListCreate(generics.ListCreateAPIView):
-    queryset = VendorType.objects.all()
-    serializer_class = VendorTypeSerializer
-
-class VendorTypeRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
-    queryset = VendorType.objects.all()
-    serializer_class = VendorTypeSerializer
-
-
-def employee_type_list(request):
-    employee_types = EmployeeType.objects.all()
-    return render(request, 'masters/employee_type_list.html', {'employee_types': employee_types})
-
-# View for VendorType
-def vendor_type_list(request):
-    vendor_types = VendorType.objects.all()
-    return render(request, 'masters/vendor_type_list.html', {'vendor_types': vendor_types})
-"""
-# masters/views.py
-from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse_lazy
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.shortcuts import get_object_or_404, render
 from .models import EmployeeType, VendorType
 from .forms import EmployeeTypeForm, VendorTypeForm
+from django import forms
+from django.http import JsonResponse
 
-# EmployeeType CRUD Views
+
+# EmployeeType Views
+"""
+class EmployeeTypeListView(ListView):
+    model = EmployeeType
+    template_name = 'masters/employee_type_list.html'
+    context_object_name = 'employee_types'
+
+class EmployeeTypeCreateView(CreateView):
+    model = EmployeeType
+    form_class = EmployeeTypeForm
+    template_name = 'masters/employee_type_form.html'
+    success_url = reverse_lazy('employee_type_list')
+
+class EmployeeTypeUpdateView(UpdateView):
+    model = EmployeeType
+    form_class = EmployeeTypeForm
+    template_name = 'masters/employee_type_form.html'
+    success_url = reverse_lazy('employee_type_list')
+
+class EmployeeTypeDeleteView(DeleteView):
+    model = EmployeeType
+    template_name = 'masters/employee_type_delete.html'
+    success_url = reverse_lazy('employee_type_list')
+
+class EmployeeTypeForm(forms.ModelForm):
+    class Meta:
+        model = EmployeeType
+        fields = ['name']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Employee Type'}),
+        }
+"""
 def employee_type_list(request):
     employee_types = EmployeeType.objects.all()
     return render(request, 'masters/employee_type_list.html', {'employee_types': employee_types})
 
 def employee_type_create(request):
     if request.method == 'POST':
-        form = EmployeeTypeForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('employee_type_list')
-    else:
-        form = EmployeeTypeForm()
-    return render(request, 'masters/employee_type_form.html', {'form': form})
+        name = request.POST.get('name')
+        employee_type = EmployeeType.objects.create(name=name)
+        return JsonResponse({'id': employee_type.id, 'name': employee_type.name, 'created_at': employee_type.created_at, 'updated_at': employee_type.updated_at})
+    return JsonResponse({'error': 'Invalid Request'}, status=400)
 
-def employee_type_edit(request, id):
-    employee_type = get_object_or_404(EmployeeType, id=id)
+def employee_type_update(request, id):
     if request.method == 'POST':
-        form = EmployeeTypeForm(request.POST, instance=employee_type)
-        if form.is_valid():
-            form.save()
-            return redirect('employee_type_list')
-    else:
-        form = EmployeeTypeForm(instance=employee_type)
-    return render(request, 'masters/employee_type_form.html', {'form': form})
+        employee_type = get_object_or_404(EmployeeType, id=id)
+        name = request.POST.get('name')
+        employee_type.name = name
+        employee_type.save()
+        return JsonResponse({'id': employee_type.id, 'name': employee_type.name, 'created_at': employee_type.created_at, 'updated_at': employee_type.updated_at})
+    return JsonResponse({'error': 'Invalid Request'}, status=400)
 
 def employee_type_delete(request, id):
-    employee_type = get_object_or_404(EmployeeType, id=id)
-    employee_type.delete()
-    return redirect('employee_type_list')
-
-# VendorType CRUD Views
-def vendor_type_list(request):
-    vendor_types = VendorType.objects.all()
-    return render(request, 'masters/vendor_type_list.html', {'vendor_types': vendor_types})
-
-def vendor_type_create(request):
     if request.method == 'POST':
-        form = VendorTypeForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('vendor_type_list')
-    else:
-        form = VendorTypeForm()
-    return render(request, 'masters/vendor_type_form.html', {'form': form})
+        employee_type = get_object_or_404(EmployeeType, id=id)
+        employee_type.delete()
+        return JsonResponse({'success': True})
+    return JsonResponse({'error': 'Invalid Request'}, status=400)
 
-def vendor_type_edit(request, id):
-    vendor_type = get_object_or_404(VendorType, id=id)
-    if request.method == 'POST':
-        form = VendorTypeForm(request.POST, instance=vendor_type)
-        if form.is_valid():
-            form.save()
-            return redirect('vendor_type_list')
-    else:
-        form = VendorTypeForm(instance=vendor_type)
-    return render(request, 'masters/vendor_type_form.html', {'form': form})
+# VendorType Views
+class VendorTypeListView(ListView):
+    model = VendorType
+    template_name = 'masters/vendor_type_list.html'
+    context_object_name = 'vendor_types'
 
-def vendor_type_delete(request, id):
-    vendor_type = get_object_or_404(VendorType, id=id)
-    vendor_type.delete()
-    return redirect('vendor_type_list')
+class VendorTypeCreateView(CreateView):
+    model = VendorType
+    form_class = VendorTypeForm
+    template_name = 'masters/vendor_type_form.html'
+    success_url = reverse_lazy('vendor_type_list')
+
+class VendorTypeUpdateView(UpdateView):
+    model = VendorType
+    form_class = VendorTypeForm
+    template_name = 'masters/vendor_type_form.html'
+    success_url = reverse_lazy('vendor_type_list')
+
+class VendorTypeDeleteView(DeleteView):
+    model = VendorType
+    template_name = 'masters/vendor_type_delete.html'
+    success_url = reverse_lazy('vendor_type_list')
