@@ -2,8 +2,8 @@
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.shortcuts import get_object_or_404, render
-from .models import EmployeeType, VendorType
-from .forms import EmployeeTypeForm, VendorTypeForm
+from .models import BrandType, EmployeeType, VendorType,EmployeeRolles
+from .forms import EmployeeTypeForm, VendorTypeForm,BrandType,EmployeeRolles
 from django import forms
 from django.http import JsonResponse
 
@@ -64,5 +64,83 @@ def vendor_type_delete(request, id):
     if request.method == 'POST':
         vendor_type = get_object_or_404(VendorType, id=id)
         vendor_type.delete()
+        return JsonResponse({'success': True})
+    return JsonResponse({'error': 'Invalid Request'}, status=400)
+
+# Brand Type Views
+
+def brand_type_list(request):
+    brand_types = BrandType.objects.all()
+    return render(request, 'masters/brand_type_list.html', {'brand_types': brand_types})
+
+def brand_type_create(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        brand_type = BrandType.objects.create(name=name)
+        return JsonResponse({
+            'id': brand_type.id,
+            'name': brand_type.name,
+            'created_at': brand_type.created_at,
+            'updated_at': brand_type.updated_at
+        })
+    return JsonResponse({'error': 'Invalid Request'}, status=400)
+
+def brand_type_update(request, id):
+    if request.method == 'POST':
+        brand_type = get_object_or_404(BrandType, id=id)
+        name = request.POST.get('name')
+        brand_type.name = name
+        brand_type.save()
+        return JsonResponse({
+            'id': brand_type.id,
+            'name': brand_type.name,
+            'created_at': brand_type.created_at,
+            'updated_at': brand_type.updated_at
+        })
+    return JsonResponse({'error': 'Invalid Request'}, status=400)
+
+def brand_type_delete(request, id):
+    if request.method == 'POST':
+        brand_type = get_object_or_404(BrandType, id=id)
+        brand_type.delete()
+        return JsonResponse({'success': True})
+    return JsonResponse({'error': 'Invalid Request'}, status=400)
+
+# employee_rolles Views
+
+def employee_rolles_list(request):
+    employee_rolles = EmployeeRolles.objects.all()
+    return render(request, 'masters/employee_rolles_list.html', {'employee_rolles': employee_rolles})
+
+def employee_rolles_create(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        employee_rolle = EmployeeRolles.objects.create(name=name)
+        return JsonResponse({
+            'id': employee_rolle.id,
+            'name': employee_rolle.name,
+            'created_at': employee_rolle.created_at,
+            'updated_at': employee_rolle.updated_at
+        })
+    return JsonResponse({'error': 'Invalid Request'}, status=400)
+
+def employee_rolles_update(request, id):
+    if request.method == 'POST':
+        employee_rolle = get_object_or_404(EmployeeRolles, id=id)
+        name = request.POST.get('name')
+        employee_rolle.name = name
+        employee_rolle.save()
+        return JsonResponse({
+            'id': employee_rolle.id,
+            'name': employee_rolle.name,
+            'created_at': employee_rolle.created_at,
+            'updated_at': employee_rolle.updated_at
+        })
+    return JsonResponse({'error': 'Invalid Request'}, status=400)
+
+def employee_rolles_delete(request, id):
+    if request.method == 'POST':
+        employee_rolle = get_object_or_404(EmployeeRolles, id=id)
+        employee_rolle.delete()
         return JsonResponse({'success': True})
     return JsonResponse({'error': 'Invalid Request'}, status=400)
