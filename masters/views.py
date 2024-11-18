@@ -7,6 +7,8 @@ from .forms import EmployeeTypeForm, VendorTypeForm
 from django import forms
 from django.http import JsonResponse
 
+def welcome(request):
+    return render(request, 'welcome.html')
 
 # EmployeeType Views
 def employee_type_list(request):
