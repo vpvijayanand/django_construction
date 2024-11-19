@@ -1,0 +1,320 @@
+{% extends 'base.html' %}
+
+{% block title %}Vendor Type Management{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+    <section class="content-header">
+        <h1>Master Management <small>Vendor Types</small></h1>
+    </section>
+
+    <div class="container mt-3">
+        <!-- Add New Vendor Type -->
+        <div class="box">
+            <div class="box-header with-border">
+                <button class="custom-dropdown-toggle" onclick="toggleDropdown()">
+                    <i class="fa fa-plus-circle"></i> Add Masters
+                </button>
+            </div>
+            <ul class="dropdown-menu" id="brandTypeDropdown">
+                <li>
+                    <a href="{% url 'employee_type_list' %}">
+                        <i class="fa fa-circle-o"></i> Employee Type
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'vendor_type_list' %}">
+                        <i class="fa fa-circle-o"></i> Vendor Type
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'brand_type_list' %}">
+                        <i class="fa fa-circle-o"></i> Brand
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'employee_rolles_list' %}">
+                        <i class="fa fa-circle-o"></i> Employee Role
+                    </a>
+                </li>
+            </ul>
+            
+        </div>
+
+        <!-- Vendor Type List -->
+        <div class="box mt-4">
+            <div class="box-header with-border">
+                <h3 class="box-title"><i class="fa fa-list"></i> Vendor Type List</h3>
+            </div>
+            <div class="box-body">
+                <table class="table table-striped table-bordered">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Created At</th>
+                            <th>Updated At</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vendor-type-table">
+                        {% for vendor_type in vendor_types %}
+                        <tr id="row-{{ vendor_type.id }}">
+                            <td>{{ vendor_type.id }}</td>
+                            <td>
+                                <span class="view-mode">{{ vendor_type.name }}</span>
+                                <input type="text" class="edit-mode form-control" value="{{ vendor_type.name }}" style="display: none;">
+                            </td>
+                            <td>{{ vendor_type.created_at|date:"d-m-Y H:i:s" }}</td>
+                            <td>{{ vendor_type.updated_at|date:"d-m-Y H:i:s" }}</td>
+                            <td>
+                                <button class="btn btn-warning btn-sm edit-btn"><i class="fa fa-edit"></i> Edit</button>
+                                <button class="btn btn-success btn-sm save-btn" style="display: none;"><i class="fa fa-save"></i> Update</button>
+                                <button class="btn btn-danger btn-sm delete-btn"><i class="fa fa-trash"></i> Delete</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Custom CSS for Django template */
+    .content-wrapper {
+        padding: 20px;
+        background: #f8f9fa;
+    }
+    
+    .box {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+    
+    .box-header {
+        padding: 1rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .box-body {
+        padding: 1rem;
+    }
+    
+    .custom-dropdown-toggle {
+        background: #0f172a;
+        color: white;
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .dropdown-menu {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+    }
+    
+    .dropdown-menu a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+    }
+
+    .dropdown-menu a:hover {
+        background-color: #f1f1f1;
+    }
+    
+    .dropdown-menu.show {
+        display: block;
+    }
+    
+    .dropdown-menu li a {
+        padding: 0.5rem 1rem;
+        display: block;
+        color: #333;
+        text-decoration: none;
+    }
+    
+    .dropdown-menu li a:hover {
+        background: #f8f9fa;
+    }
+    
+    .table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+    
+    .table th {
+        background: #f8f9fa;
+        color: #666;
+        font-weight: 500;
+        text-align: left;
+        padding: 12px 16px;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .table td {
+        padding: 12px 16px;
+        border-bottom: 1px solid #e9ecef;
+        color: #333;
+    }
+    
+    .table tbody tr:hover {
+        background: #f8f9fa;
+    }
+    
+    .btn {
+        padding: 0.375rem 0.75rem;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.875rem;
+    }
+    
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+    
+    .btn-primary {
+        background: #0f172a;
+        color: white;
+    }
+    
+    .btn-warning {
+        background: #000000;
+        color: #000;
+    }
+    
+    .btn-success {
+        background: #000000;
+        color: white;
+    }
+    
+    .btn-danger {
+        background: #000000;
+        color: white;
+    }
+    
+    .form-control {
+        padding: 0.375rem 0.75rem;
+        border: 1px solid #e9ecef;
+        border-radius: 4px;
+        font-size: 0.875rem;
+    }
+    
+    .form-group {
+        margin-bottom: 1rem;
+    }
+</style>
+
+<script>
+    // CSRF Token
+    const csrfToken = "{{ csrf_token }}";
+
+    // Create Vendor Type
+    document.getElementById('create-btn').addEventListener('click', function () {
+        const name = document.getElementById('new-name').value.trim();
+        const warningElement = document.getElementById('empty-warning');
+        
+        if (name === '') {
+            warningElement.style.display = 'block';
+            return;
+        }
+        
+        warningElement.style.display = 'none';
+        fetch("/masters/vendor-type/create/", {
+            method: "POST",
+            headers: { "X-CSRFToken": csrfToken, "Content-Type": "application/x-www-form-urlencoded" },
+            body: `name=${name}`
+        })
+        .then(response => response.json())
+        .then(data => location.reload());
+    });
+
+    // Add event listener to hide warning when user starts typing
+    document.getElementById('new-name').addEventListener('input', function() {
+        document.getElementById('empty-warning').style.display = 'none';
+    });
+
+    // Edit Vendor Type
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const row = this.closest('tr');
+            row.querySelector('.view-mode').style.display = 'none';
+            row.querySelector('.edit-mode').style.display = 'block';
+            row.querySelector('.save-btn').style.display = 'inline-block';
+            this.style.display = 'none';
+        });
+    });
+
+    // Save Vendor Type
+    document.querySelectorAll('.save-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const row = this.closest('tr');
+            const id = row.id.split('-')[1];
+            const name = row.querySelector('.edit-mode').value;
+
+            fetch(`/masters/vendor-type/update/${id}/`, {
+                method: "POST",
+                headers: { "X-CSRFToken": csrfToken, "Content-Type": "application/x-www-form-urlencoded" },
+                body: `name=${name}`
+            })
+            .then(response => response.json())
+            .then(data => location.reload());
+        });
+    });
+
+    // Delete Vendor Type
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            if (confirm("Are you sure you want to delete this?")) {
+                const row = this.closest('tr');
+                const id = row.id.split('-')[1];
+
+                fetch(`/masters/vendor-type/delete/${id}/`, {
+                    method: "POST",
+                    headers: { "X-CSRFToken": csrfToken }
+                })
+                .then(response => response.json())
+                .then(data => location.reload());
+            }
+        });
+    });
+
+    // Toggle dropdown
+    function toggleDropdown() {
+        var dropdown = document.getElementById("brandTypeDropdown");
+        dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+    }
+
+    // Close the dropdown if the user clicks outside of it
+    window.onclick = function(event) {
+        if (!event.target.matches('.custom-dropdown-toggle')) {
+            var dropdowns = document.getElementsByClassName("dropdown-menu");
+            for (var i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.style.display === "block") {
+                    openDropdown.style.display = "none";
+                }
+            }
+        }
+    }
+</script>
+{% endblock %}

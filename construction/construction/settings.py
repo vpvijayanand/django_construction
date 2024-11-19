@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'myapp',
+    'client',
     'masters',  # Add the masters app
     'rest_framework',  # Add Django REST Framework if you're using it
 ]

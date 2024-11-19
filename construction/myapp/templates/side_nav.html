@@ -1,0 +1,22 @@
+{% load static %}
+
+<aside class="sidebar">
+    <div class="logo">
+        <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/logo-ct-D1kH7LHDZL0PtM0NgFAuJXbc7h1VvM.png" alt="Construction Pro Logo">
+        <h1>Construction Pro</h1>
+    </div>
+    <nav>
+        <a href="{% url 'welcome' %}" class="nav-item {% if request.resolver_match.url_name == 'welcome' %}active{% endif %}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+            Dashboard
+        </a>
+        <a href="{% url 'employee_type_list' %}" class="nav-item {% if 'masters' in request.path %}active{% endif %}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            Masters
+        </a>
+        <a href="{% url 'client-list' %}" class="nav-item {% if 'client' in request.path %}active{% endif %}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+            Client
+        </a>
+    </nav>
+</aside>
