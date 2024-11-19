@@ -3,9 +3,10 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.shortcuts import get_object_or_404, render
 from .models import BrandType, EmployeeType, VendorType,EmployeeRolles
-from .forms import EmployeeTypeForm, VendorTypeForm,BrandType,EmployeeRolles
+from .forms import EmployeeTypeForm, VendorTypeForm,BrandType,EmployeeRolles,Iteam
 from django import forms
 from django.http import JsonResponse
+
 
 def welcome(request):
     return render(request, 'welcome.html')
@@ -144,3 +145,53 @@ def employee_rolles_delete(request, id):
         employee_rolle.delete()
         return JsonResponse({'success': True})
     return JsonResponse({'error': 'Invalid Request'}, status=400)
+
+# Iteam Views
+
+# List all iteams
+def iteam_list(request):
+    iteams = Iteam.objects.select_related('brand').all()
+    return render(request, 'masters/iteam_list.html', {'iteams': iteams})
+
+# Create a new iteam
+def iteam_create(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        brand_id = request.POST.get('brand_id')
+        brand = get_object_or_404(BrandType, id=brand_id)
+        iteam = Iteam.objects.create(name=name, brand=brand)
+        return JsonResponse({
+            'id': iteam.id,
+            'name': iteam.name,
+            'brand': iteam.brand.name,
+            'created_at': iteam.created_at,
+            'updated_at': iteam.updated_at
+        })
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+# Update an existing iteam
+def iteam_update(request, id):
+    if request.method == 'POST':
+        iteam = get_object_or_404(Iteam, id=id)
+        name = request.POST.get('name')
+        brand_id = request.POST.get('brand_id')
+        brand = get_object_or_404(BrandType, id=brand_id)
+        iteam.name = name
+        iteam.brand = brand
+        iteam.save()
+        return JsonResponse({
+            'id': iteam.id,
+            'name': iteam.name,
+            'brand': iteam.brand.name,
+            'created_at': iteam.created_at,
+            'updated_at': iteam.updated_at
+        })
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+# Delete an iteam
+def iteam_delete(request, id):
+    if request.method == 'POST':
+        iteam = get_object_or_404(Iteam, id=id)
+        iteam.delete()
+        return JsonResponse({'success': True})
+    return JsonResponse({'error': 'Invalid request'}, status=400)

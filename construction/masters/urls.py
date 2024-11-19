@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
-from .models import EmployeeType,VendorType,BrandType,EmployeeRolles
+
+# from .models import EmployeeType,VendorType,BrandType,EmployeeRolles,Iteam
 
 # from .views import (
 #     employeeTypeListView, employeeTypeCreateView, employeeTypeUpdateView, employeeTypeDeleteView,
@@ -27,5 +28,10 @@ urlpatterns = [
     path('employee-rolles/create/', views.employee_rolles_create, name='employee_rolles_create'),
     path('employee-rolles/update/<int:id>/', views.employee_rolles_update, name='employee_rolles_update'),
     path('employee-rolles/delete/<int:id>/', views.employee_rolles_delete, name='employee_rolles_delete'),
+    
+path('iteams/', views.iteam_list, name='iteam_list'),  # List all iteams
+    path('iteams/create/', views.iteam_create, name='iteam_create'),  # Create a new iteam
+    path('iteams/update/<int:id>/', views.iteam_update, name='iteam_update'),  # Update an iteam
+    path('iteams/delete/<int:id>/', views.iteam_delete, name='iteam_delete'),  # Delete an iteam
 ]
 

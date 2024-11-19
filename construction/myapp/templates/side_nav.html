@@ -1,5 +1,90 @@
 {% load static %}
+<style>
+    .dashboard {
+    display: flex;
+    height: 100vh;
+}
 
+.sidebar {
+    width: 250px;
+    background-color: #fff;
+    color: #000;
+    padding: 20px;
+    border-right: 1px solid #ddd;
+    height: 100vh;
+}
+.main-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+/* Sidebar styles */
+.logo {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.logo img {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+
+.logo h1 {
+    font-size: 1.2rem;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    color: #000;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.nav-item svg {
+    margin-right: 10px;
+    width: 20px;
+    height: 20px;
+}
+
+.nav-item:hover, .nav-item.active {
+    background-color: #f4f4f4;
+}
+
+    .dropdown {
+        position: relative;
+    }
+    .dropdown-content {
+        display: none;
+        padding-left: 30px;
+    }
+    .dropdown-content a {
+        display: block;
+        padding: 8px 0;
+        color: #666;
+        text-decoration: none;
+        font-size: 14px;
+    }
+    .dropdown-content a:hover {
+        color: #333;
+    }
+    .dropdown.active .dropdown-content {
+        display: block;
+    }
+    .dropdown .nav-item::after {
+        content: '▼';
+        margin-left: auto;
+        font-size: 12px;
+        transition: transform 0.3s;
+    }
+    .dropdown.active .nav-item::after {
+        transform: rotate(180deg);
+    }
+</style>
 <aside class="sidebar">
     <div class="logo">
         <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/logo-ct-D1kH7LHDZL0PtM0NgFAuJXbc7h1VvM.png" alt="Construction Pro Logo">
@@ -10,13 +95,49 @@
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
             Dashboard
         </a>
+        <div class="dropdown">
         <a href="{% url 'employee_type_list' %}" class="nav-item {% if 'masters' in request.path %}active{% endif %}">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
             Masters
         </a>
+        <div class="dropdown-content">
+            <a href="{% url 'employee_type_list' %}">Employee Type</a>
+            <a href="{% url 'vendor_type_list' %}">Vendor Type</a>
+            <a href="{% url 'brand_type_list' %}">Brand</a>
+            <a href="{% url 'employee_rolles_list' %}">Employee Role</a>
+            <a href="{% url 'iteam_list' %}">Item List</a>
+        </div>
+    </div>
         <a href="{% url 'client-list' %}" class="nav-item {% if 'client' in request.path %}active{% endif %}">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
             Client
         </a>
     </nav>
 </aside>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const dropdown = document.querySelector('.dropdown');
+        const dropdownTrigger = dropdown.querySelector('.nav-item');
+
+        dropdownTrigger.addEventListener('click', function(e) {
+            e.preventDefault();
+            dropdown.classList.toggle('active');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!dropdown.contains(e.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+
+        // Keyboard accessibility
+        dropdownTrigger.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                dropdown.classList.toggle('active');
+            }
+        });
+    });
+</script>
