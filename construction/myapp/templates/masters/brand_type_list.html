@@ -4,45 +4,19 @@
 
 {% block content %}
 <div class="content-wrapper">
-    <section class="content-header">
-        <h1>Master Management <small>Brand Types</small></h1>
-    </section>
+    
 
     <div class="container mt-3">
         <!-- Add New Brand Type -->
         <div class="box">
             <div class="box-header with-border">
-                <button class="custom-dropdown-toggle" onclick="toggleDropdown()">
-                    <i class="fa fa-plus-circle"></i> Add Masters
-                </button>
+              
+                    <i class="fa fa-plus-circle"></i> <section class="content-header">
+                        <h1>Master Management <small>Brand Types</small></h1>
+                    </section>
+               
             </div>
-            <ul class="dropdown-menu" id="brandTypeDropdown">
-                <li>
-                    <a href="{% url 'employee_type_list' %}">
-                        <i class="fa fa-circle-o"></i> Employee Type
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url 'vendor_type_list' %}">
-                        <i class="fa fa-circle-o"></i> Vendor Type
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url 'brand_type_list' %}">
-                        <i class="fa fa-circle-o"></i> Brand
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url 'employee_rolles_list' %}">
-                        <i class="fa fa-circle-o"></i> Employee Role
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url 'iteam_list' %}">
-                        <i class="fa fa-circle-o"></i> Item
-                    </a>
-                </li>
-            </ul>
+            
         </div>
 
         <!-- Brand Type List -->

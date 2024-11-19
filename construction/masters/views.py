@@ -151,7 +151,8 @@ def employee_rolles_delete(request, id):
 # List all iteams
 def iteam_list(request):
     iteams = Iteam.objects.select_related('brand').all()
-    return render(request, 'masters/iteam_list.html', {'iteams': iteams})
+    brand_types = BrandType.objects.all()  # Fetch all brands
+    return render(request, 'masters/iteam_list.html', {'iteams': iteams, 'brand_types': brand_types})
 
 # Create a new iteam
 def iteam_create(request):

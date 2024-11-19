@@ -4,17 +4,18 @@
 
 {% block content %}
 <div class="content-wrapper">
-    <section class="content-header">
-        <h1>Item Management <small>Manage your items</small></h1>
-    </section>
+    
 
     <div class="container mt-3">
         <!-- Add New Item -->
         <div class="box">
             <div class="box-header with-border">
-                <button class="btn btn-primary" id="newEntryButton">
-                    <i class="fa fa-plus-circle"></i> Add New Item
-                </button>
+                
+                    <i class="fa fa-plus-circle"></i>
+                    <section class="content-header">
+                        <h1>Item Management <small>Manage your items</small></h1>
+                    </section>
+             
             </div>
         </div>
 
@@ -74,8 +75,8 @@
                 <div class="form-group">
                     <label for="editBrand">Brand:</label>
                     <select id="editBrand" name="brand" required>
-                        {% for brand in brands %}
-                        <option value="{{ brand.id }}" {% if brand.id == item.brand.id %}selected{% endif %}>{{ brand.name }}</option>
+                        {% for brand_type in brand_types %}
+                        <option value="{{ brand_type.id }}" {% if brand_type.id == item.brand.id %}selected{% endif %}>{{  brand_type.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -84,30 +85,39 @@
         </div>
     </div>
 
-    <!-- Add New Item Modal -->
-    <div id="addModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Add New Item</h2>
-            <form id="addForm" method="post">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label for="addName">Name:</label>
-                    <input type="text" id="addName" name="name" required>
-                </div>
-                <div class="form-group">
-                    <label for="addBrand">Brand:</label>
-                    <select id="addBrand" name="brand" required>
-                        {% for brand in brands %}
-                        <option value="{{ brand.id }}">{{ brand.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-primary">Add Item</button>
-            </form>
-        </div>
+   <!-- Add New Item Modal -->
+<div id="addModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Add New Item</h2>
+        <form id="addForm" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="addName">Name:</label>
+                <input 
+                    type="text" 
+                    id="addName" 
+                    name="name" 
+                    required 
+                    style="padding: .3rem 0rem; border: 1px solid #000000; border-radius: 4px; font-size: 1.0rem;">
+            </div>
+            <div class="form-group">
+                <label for="addBrand">Brand:</label>
+                <select 
+                    id="addBrand" 
+                    name="brand" 
+                    required 
+                    style="padding: .3rem 0.9rem; border: 1px solid #000000; border-radius: 4px; font-size: 1.0rem;">
+                    {% for brand_type in brand_types %}
+                    <option value="{{ brand_type.id }}">{{ brand_type.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Item</button>
+        </form>
     </div>
 </div>
+
 <style>
      .content-wrapper {
         padding: 20px;
@@ -307,6 +317,10 @@
         text-decoration: none;
         cursor: pointer;
     }
+
+
+
+
 </style>
 <script>
     const csrfToken = "{{ csrf_token }}";
