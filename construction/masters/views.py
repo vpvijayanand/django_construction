@@ -3,7 +3,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.shortcuts import get_object_or_404, render
 from .models import BrandType, EmployeeType, VendorType,EmployeeRolles
-from .forms import EmployeeTypeForm, VendorTypeForm,BrandType,EmployeeRolles,Iteam
+from .forms import EmployeeType, VendorType,BrandType,EmployeeRolles,Iteam
 from django import forms
 from django.http import JsonResponse
 
@@ -155,6 +155,7 @@ def iteam_list(request):
     return render(request, 'masters/iteam_list.html', {'iteams': iteams, 'brand_types': brand_types})
 
 # Create a new iteam
+
 def iteam_create(request):
     if request.method == 'POST':
         name = request.POST.get('name')

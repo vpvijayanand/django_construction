@@ -267,24 +267,7 @@
     // CSRF Token
     const csrfToken = "{{ csrf_token }}";
 
-    // Toggle dropdown
-    function toggleDropdown() {
-        var dropdown = document.getElementById("brandTypeDropdown");
-        dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
-    }
 
-    // Close the dropdown if the user clicks outside of it
-    window.onclick = function(event) {
-        if (!event.target.matches('.custom-dropdown-toggle')) {
-            var dropdowns = document.getElementsByClassName("dropdown-menu");
-            for (var i = 0; i < dropdowns.length; i++) {
-                var openDropdown = dropdowns[i];
-                if (openDropdown.style.display === "block") {
-                    openDropdown.style.display = "none";
-                }
-            }
-        }
-    }
 
     // Get the modal
     var modal = document.createElement('div');
@@ -325,7 +308,7 @@
     document.getElementById('create-form').addEventListener('submit', function (e) {
         e.preventDefault();
         const name = document.getElementById('new-name').value;
-        fetch("/masters/employee-types/create/", {
+        fetch("`", {
             method: "POST",
             headers: { "X-CSRFToken": csrfToken, "Content-Type": "application/x-www-form-urlencoded" },
             body: `name=${name}`

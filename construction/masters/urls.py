@@ -30,7 +30,7 @@ urlpatterns = [
     path('employee-rolles/delete/<int:id>/', views.employee_rolles_delete, name='employee_rolles_delete'),
     
     path('iteams/', views.iteam_list, name='iteam_list'),  # List all iteams
-    path('iteams/create/', views.iteam_create, name='iteam_create'),  # Create a new iteam
+    path('iteam/create/', views.iteam_create, name='iteam_create'),
     path('iteams/update/<int:id>/', views.iteam_update, name='iteam_update'),  # Update an iteam
     path('iteams/delete/<int:id>/', views.iteam_delete, name='iteam_delete'),  # Delete an iteam
 ]

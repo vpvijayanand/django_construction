@@ -266,33 +266,54 @@
 <script>
     // CSRF Token
     const csrfToken = "{{ csrf_token }}";
+    // Get the modal
+    var modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>New Entry</h2>
+            <form id="create-form">
+                <div class="form-group">
+                    <label for="new-name">Name:</label>
+                    <input type="text" id="new-name" name="name" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Add</button>
+            </form>
+        </div>
+    `;
+    document.body.appendChild(modal);
+// Get the button that opens the modal
+var btn = document.getElementById("newEntryButton");
 
+// Get the <span> element that closes the modal
+var span = modal.querySelector(".close");
+
+// When the user clicks the button, open the modal 
+btn.onclick = function() {
+    modal.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+    modal.style.display = "none";
+}
     // Create Vendor Type
-    document.getElementById('create-btn').addEventListener('click', function () {
-        const name = document.getElementById('new-name').value.trim();
-        const warningElement = document.getElementById('empty-warning');
-        
-        if (name === '') {
-            warningElement.style.display = 'block';
-            return;
-        }
-        
-        warningElement.style.display = 'none';
-        fetch("/masters/vendor-type/create/", {
+    document.getElementById('create-form').addEventListener('click', function () {
+        e.preventDefault();
+        const name = document.getElementById('new-name').value;
+        fetch("masters/Vendor-Type/create/", {
             method: "POST",
             headers: { "X-CSRFToken": csrfToken, "Content-Type": "application/x-www-form-urlencoded" },
             body: `name=${name}`
         })
         .then(response => response.json())
-        .then(data => location.reload());
-    });
-
-    // Add event listener to hide warning when user starts typing
-    document.getElementById('new-name').addEventListener('input', function() {
-        document.getElementById('empty-warning').style.display = 'none';
-    });
-
-    // Edit Vendor Type
+            .then(data => {
+                modal.style.display = "none";
+                location.reload();
+            });
+        });
+         // Edit Employee Type
     document.querySelectorAll('.edit-btn').forEach(btn => {
         btn.addEventListener('click', function () {
             const row = this.closest('tr');
@@ -302,7 +323,9 @@
             this.style.display = 'none';
         });
     });
+        
 
+   
     // Save Vendor Type
     document.querySelectorAll('.save-btn').forEach(btn => {
         btn.addEventListener('click', function () {
@@ -310,7 +333,7 @@
             const id = row.id.split('-')[1];
             const name = row.querySelector('.edit-mode').value;
 
-            fetch(`/masters/vendor-type/update/${id}/`, {
+            fetch(`/masters/Vendor-Type/update/${id}/`, {
                 method: "POST",
                 headers: { "X-CSRFToken": csrfToken, "Content-Type": "application/x-www-form-urlencoded" },
                 body: `name=${name}`
@@ -327,7 +350,7 @@
                 const row = this.closest('tr');
                 const id = row.id.split('-')[1];
 
-                fetch(`/masters/vendor-type/delete/${id}/`, {
+                fetch(`/masters/Vendor-Type/delete/${id}/`, {
                     method: "POST",
                     headers: { "X-CSRFToken": csrfToken }
                 })
@@ -337,23 +360,6 @@
         });
     });
 
-    // Toggle dropdown
-    function toggleDropdown() {
-        var dropdown = document.getElementById("brandTypeDropdown");
-        dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
-    }
-
-    // Close the dropdown if the user clicks outside of it
-    window.onclick = function(event) {
-        if (!event.target.matches('.custom-dropdown-toggle')) {
-            var dropdowns = document.getElementsByClassName("dropdown-menu");
-            for (var i = 0; i < dropdowns.length; i++) {
-                var openDropdown = dropdowns[i];
-                if (openDropdown.style.display === "block") {
-                    openDropdown.style.display = "none";
-                }
-            }
-        }
-    }
+   
 </script>
 {% endblock %}

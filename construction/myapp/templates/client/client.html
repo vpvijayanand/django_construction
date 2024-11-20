@@ -1,6 +1,5 @@
-{% extends 'base.html' %}
-
-{% block title %}Client Management{% endblock %}
+{% extends "base.html" %}
+{% load static %}
 
 {% block content %}
 <div class="content-wrapper">
@@ -9,36 +8,12 @@
     </section>
 
     <div class="container mt-3">
-        <!-- Add New Client -->
+        <!-- Add New Client Button -->
         <div class="box">
-            <div class="box-header with-border">
-                <h3><i class="fa fa-plus-circle"></i> Add Client</h3>
-            </div>
-            <div class="box-body">
-                <form id="create-form" class="form-inline">
-                    {% csrf_token %}
-                    <div class="form-group mr-3">
-                        <label for="name" class="mr-2">Name:</label>
-                        <input type="text" name="name" id="new-name" class="form-control" placeholder="Enter Client Name" required>
-                    </div>
-                    <div class="form-group mr-3">
-                        <label for="mobile1" class="mr-2">Mobile 1:</label>
-                        <input type="text" name="mobile1" id="mobile1" class="form-control" placeholder="Enter Mobile 1">
-                    </div>
-                    <div class="form-group mr-3">
-                        <label for="mobile2" class="mr-2">Mobile 2:</label>
-                        <input type="text" name="mobile2" id="mobile2" class="form-control" placeholder="Enter Mobile 2">
-                    </div>
-                    <div class="form-group mr-3">
-                        <label for="email" class="mr-2">Email ID:</label>
-                        <input type="email" name="email" id="email" class="form-control" placeholder="Enter Email ID">
-                    </div>
-                    <button type="button" class="btn btn-primary" id="create-btn">
-                        <i class="fa fa-plus"></i> Add
-                    </button>
-                </form>
-                <div id="empty-warning" class="text-danger mt-2" style="display: none;">Please enter all required details.</div>
-            </div>
+            <button class="button" id="newEntryButton">
+                <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                New Entry
+            </button>
         </div>
 
         <!-- Client List -->
@@ -58,32 +33,25 @@
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="brand-type-table">
+                    <tbody id="client-table">
                         {% for client in clients %}
-                        <tr id="row-{{ client.id }}">
+                        <tr>
                             <td>{{ client.id }}</td>
+                            <td>{{ client.name }}</td>
                             <td>
-                                <span class="view-mode">{{ client.name }}</span>
-                                <input type="text" class="edit-mode form-control" value="{{ client.name }}" style="display: none;">
-                            </td>
-                            <td>
-                                <div class="view-mode">
-                                    <p>Mobile 1: {{ client.mobile1 }}</p>
-                                    <p>Mobile 2: {{ client.mobile2 }}</p>
-                                    <p>Email: {{ client.email }}</p>
-                                </div>
-                                <div class="edit-mode" style="display: none;">
-                                    <input type="text" class="form-control mb-1" value="{{ client.mobile1 }}" placeholder="Mobile 1">
-                                    <input type="text" class="form-control mb-1" value="{{ client.mobile2 }}" placeholder="Mobile 2">
-                                    <input type="email" class="form-control" value="{{ client.email }}" placeholder="Email">
-                                </div>
+                                <p>Mobile 1: {{ client.mobile1 }}</p>
+                                <p>Mobile 2: {{ client.mobile2 }}</p>
+                                <p>Email: {{ client.email }}</p>
                             </td>
                             <td>{{ client.created_at|date:"d-m-Y H:i:s" }}</td>
                             <td>{{ client.updated_at|date:"d-m-Y H:i:s" }}</td>
                             <td>
-                                <button class="btn btn-warning btn-sm edit-btn"><i class="fa fa-edit"></i> Edit</button>
-                                <button class="btn btn-success btn-sm save-btn" style="display: none;"><i class="fa fa-save"></i> Update</button>
-                                <button class="btn btn-danger btn-sm delete-btn"><i class="fa fa-trash"></i> Delete</button>
+                                <button class="btn btn-warning btn-sm edit-btn" onclick="editClient('{{ client.id }}', '{{ client.name }}', '{{ client.mobile1 }}', '{{ client.mobile2 }}', '{{ client.email }}')">
+                                    <i class="fa fa-edit"></i> Edit
+                                </button>
+                                <button class="btn btn-danger btn-sm delete-btn" onclick="deleteClient('{{ client.id }}')">
+                                    <i class="fa fa-trash"></i> Delete
+                                </button>
                             </td>
                         </tr>
                         {% endfor %}
@@ -93,78 +61,273 @@
         </div>
     </div>
 
-<script>
-    const csrfToken = "{{ csrf_token }}";
+    <!-- Add Client Modal -->
+    <div id="addClientModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Add Client</h2>
+            <form id="addClientForm">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" class="form-control" placeholder="Enter Client Name" required>
+                </div>
+                <div class="form-group">
+                    <label for="mobile1">Mobile 1:</label>
+                    <input type="text" id="mobile1" name="mobile1" class="form-control" placeholder="Enter Mobile 1" required>
+                </div>
+                <div class="form-group">
+                    <label for="mobile2">Mobile 2:</label>
+                    <input type="text" id="mobile2" name="mobile2" class="form-control" placeholder="Enter Mobile 2">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email ID:</label>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="Enter Email ID" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Client</button>
+            </form>
+        </div>
+    </div>
 
-    // Create Client
-    document.getElementById('create-btn').addEventListener('click', function () {
-        const name = document.getElementById('new-name').value.trim();
-        const mobile1 = document.getElementById('mobile1').value.trim();
-        const mobile2 = document.getElementById('mobile2').value.trim();
-        const email = document.getElementById('email').value.trim();
-        const warningElement = document.getElementById('empty-warning');
-        
-        if (name === '' || mobile1 === '' || email === '') {
-            warningElement.style.display = 'block';
-            return;
+    <!-- Edit Client Modal -->
+    <div id="editClientModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Edit Client</h2>
+            <form id="editClientForm">
+                {% csrf_token %}
+                <input type="hidden" id="editClientId" name="id">
+                <div class="form-group">
+                    <label for="editName">Name:</label>
+                    <input type="text" id="editName" name="name" class="form-control" placeholder="Enter Client Name" required>
+                </div>
+                <div class="form-group">
+                    <label for="editMobile1">Mobile 1:</label>
+                    <input type="text" id="editMobile1" name="mobile1" class="form-control" placeholder="Enter Mobile 1" required>
+                </div>
+                <div class="form-group">
+                    <label for="editMobile2">Mobile 2:</label>
+                    <input type="text" id="editMobile2" name="mobile2" class="form-control" placeholder="Enter Mobile 2">
+                </div>
+                <div class="form-group">
+                    <label for="editEmail">Email ID:</label>
+                    <input type="email" id="editEmail" name="email" class="form-control" placeholder="Enter Email ID" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Client</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .content-wrapper {
+        padding: 20px;
+        font-family: Arial, sans-serif;
+    }
+    .box {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 20px;
+        padding: 15px;
+    }
+    .form-group {
+        margin-bottom: 15px;
+    }
+    .form-control {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    .btn {
+        padding: 8px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .btn-primary {
+        background-color: #007bff;
+        color: #fff;
+    }
+    .btn-warning {
+        background-color: #ffc107;
+        color: #000;
+    }
+    .btn-danger {
+        background-color: #dc3545;
+        color: #fff;
+    }
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .table th, .table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    .table th {
+        background-color: #f8f9fa;
+    }
+    .button {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 16px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+    .button svg {
+        margin-right: 8px;
+    }
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4);
+    }
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 500px;
+        border-radius: 5px;
+    }
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+</style>
+
+<script>
+    // Add Client Modal
+    var addModal = document.getElementById('addClientModal');
+    var addBtn = document.getElementById('newEntryButton');
+    var addSpan = addModal.getElementsByClassName('close')[0];
+
+    addBtn.onclick = function() {
+        addModal.style.display = "block";
+    }
+
+    addSpan.onclick = function() {
+        addModal.style.display = "none";
+    }
+
+    // Edit Client Modal
+    var editModal = document.getElementById('editClientModal');
+    var editSpan = editModal.getElementsByClassName('close')[0];
+
+    editSpan.onclick = function() {
+        editModal.style.display = "none";
+    }
+
+    // Close modals when clicking outside
+    window.onclick = function(event) {
+        if (event.target == addModal) {
+            addModal.style.display = "none";
         }
-        
-        warningElement.style.display = 'none';
-        fetch("client/clients/create/", {
-            method: "POST",
-            headers: { "X-CSRFToken": csrfToken, "Content-Type": "application/x-www-form-urlencoded" },
-            body: `name=${name}&mobile1=${mobile1}&mobile2=${mobile2}&email=${email}`
+        if (event.target == editModal) {
+            editModal.style.display = "none";
+        }
+    }
+
+    
+    // Add Client Form Submission
+    document.getElementById('addClientForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+        fetch('{% url "client_create" %}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
         })
         .then(response => response.json())
-        .then(data => location.reload());
-    });
-
-    // Edit Client
-    document.querySelectorAll('.edit-btn').forEach(btn => {
-        btn.addEventListener('click', function () {
-            const row = this.closest('tr');
-            row.querySelector('.view-mode').style.display = 'none';
-            row.querySelector('.edit-mode').style.display = 'block';
-            row.querySelector('.save-btn').style.display = 'inline-block';
-            this.style.display = 'none';
-        });
-    });
-
-    // Save Client
-    document.querySelectorAll('.save-btn').forEach(btn => {
-        btn.addEventListener('click', function () {
-            const row = this.closest('tr');
-            const id = row.id.split('-')[1];
-            const name = row.querySelectorAll('.edit-mode input')[0].value;
-            const mobile1 = row.querySelectorAll('.edit-mode input')[1].value;
-            const mobile2 = row.querySelectorAll('.edit-mode input')[2].value;
-            const email = row.querySelectorAll('.edit-mode input')[3].value;
-
-            fetch(`/client/clients/update/${id}/`, {
-                method: "POST",
-                headers: { "X-CSRFToken": csrfToken, "Content-Type": "application/x-www-form-urlencoded" },
-                body: `name=${name}&mobile1=${mobile1}&mobile2=${mobile2}&email=${email}`
-            })
-            .then(response => response.json())
-            .then(data => location.reload());
-        });
-    });
-
-    // Delete Client
-    document.querySelectorAll('.delete-btn').forEach(btn => {
-        btn.addEventListener('click', function () {
-            if (confirm("Are you sure you want to delete this client?")) {
-                const row = this.closest('tr');
-                const id = row.id.split('-')[1];
-
-                fetch(`/client/clients/delete/${id}/`, {
-                    method: "POST",
-                    headers: { "X-CSRFToken": csrfToken }
-                })
-                .then(response => response.json())
-                .then(data => location.reload());
+        .then(data => {
+            if (data.success) {
+                alert('Client added successfully');
+                addModal.style.display = 'none';
+                location.reload();
+            } else {
+                alert('Error adding client');
             }
         });
     });
+
+    // Edit Client Form Submission
+    document.getElementById('editClientForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+        var clientId = formData.get('id');
+        fetch('{% url "client_update" 0 %}'.replace('0', clientId), {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Client updated successfully');
+                editModal.style.display = 'none';
+                location.reload();
+            } else {
+                alert('Error updating client');
+            }
+        });
+    });
+
+    // Populate Edit Form
+    function editClient(id, name, mobile1, mobile2, email) {
+        document.getElementById('editClientId').value = id;
+        document.getElementById('editName').value = name;
+        document.getElementById('editMobile1').value = mobile1;
+        document.getElementById('editMobile2').value = mobile2;
+        document.getElementById('editEmail').value = email;
+        editModal.style.display = 'block';
+    }
+
+    // Delete Client
+    function deleteClient(id) {
+        if (confirm('Are you sure you want to delete this client?')) {
+            fetch('{% url "client_delete" 0 %}'.replace('0', id), {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Client deleted successfully');
+                    location.reload();
+                } else {
+                    alert('Error deleting client');
+                }
+            });
+        }
+    }
 </script>
 {% endblock %}
