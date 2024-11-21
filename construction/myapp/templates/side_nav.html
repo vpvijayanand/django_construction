@@ -87,7 +87,7 @@
 </style>
 <aside class="sidebar">
     <div class="logo">
-        <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/logo-ct-D1kH7LHDZL0PtM0NgFAuJXbc7h1VvM.png" alt="Construction Pro Logo">
+        <img src="{% static 'img/favicon.png' %}" alt="Construction Pro Logo">
         <h1>Construction Pro</h1>
     </div>
     <nav>
@@ -105,7 +105,7 @@
             <a href="{% url 'vendor_type_list' %}">Vendor Type</a>
             <a href="{% url 'brand_type_list' %}">Brand</a>
             <a href="{% url 'employee_rolles_list' %}">Employee Role</a>
-            <a href="{% url 'iteam_list' %}">Item List</a>
+            <a href="{% url 'item_list' %}">Item List</a>
         </div>
     </div>
         <a href="{% url 'client-list' %}" class="nav-item {% if 'client' in request.path %}active{% endif %}">

@@ -32,12 +32,14 @@ class vendortype(models.Model):
 
     def __str__(self):
         return self.name
-
-class Iteam(models.Model):
+class Item(models.Model):  # Class names should follow PascalCase convention
     name = models.CharField(max_length=255)
-    brand = models.ForeignKey(BrandType, on_delete=models.CASCADE, related_name='iteams')
+    brand = models.ForeignKey(  # Assuming `BrandType` is another model
+        BrandType, on_delete=models.CASCADE, related_name='items'  # Use plural for related_name
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.name} ({self.brand.name})"
+        # Check if brand exists to avoid potential issues when a related object is deleted
+        return f"{self.name} ({self.brand.name})" if self.brand else self.name

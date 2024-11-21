@@ -1,6 +1,6 @@
 # masters/serializers.py
 from rest_framework import serializers
-from .models import EmployeeType, vendortype ,BrandType,EmployeeRolles
+from .models import EmployeeType, vendortype ,BrandType,EmployeeRolles,Item
 
 class EmployeeTypeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -23,10 +23,9 @@ class EmployeeRolleSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'created_at', 'updated_at']
 
 
-class IteamSerializer(serializers.ModelSerializer):
-    brand_name = serializers.ReadOnlyField(source='brand.name')  # Display associated brand name
+class ItemSerializer(serializers.ModelSerializer):
+    brand_name = serializers.CharField(source='brand.name', read_only=True)  # Add 'brand_name' as a computed field
 
     class Meta:
-        model = Iteam
-        fields = ['id', 'name', 'brand_name', 'brand', 'created_at', 'updated_at']
-        # 'brand' is the ForeignKey ID, 'brand_name' is the related name for display
+        model = Item
+        fields = ['id', 'name', 'brand_name', 'created_at', 'updated_at']

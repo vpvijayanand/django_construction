@@ -1,6 +1,6 @@
 # masters/forms.py
 from django import forms
-from .models import EmployeeType, vendortype ,BrandType,EmployeeRolles,Iteam
+from .models import EmployeeType, vendortype ,BrandType,EmployeeRolles,Item
 
 class EmployeeTypeForm(forms.ModelForm):
     class Meta:
@@ -16,16 +16,17 @@ class BrandTypeForm(forms.ModelForm):
         model = BrandType
         fields = ['name']
 
-class IteamForm(forms.ModelForm):
-    class Meta:
-        model = Iteam
-        fields = ['name', 'brand']  # Include 'brand' to select an associated brand
-        widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Item Name'}),
-            'brand': forms.Select(attrs={'class': 'form-control'})
-        }
         
 class EmployeeRollesForm(forms.ModelForm):
     class Meta:
         model = EmployeeRolles
         fields = ['name']
+
+class ItemForm(forms.ModelForm):
+    class Meta:
+        model = Item
+        fields = ['name', 'brand']  # Include only the fields that should be editable
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter item name'}),
+            'brand': forms.Select(attrs={'class': 'form-control'}),
+        }

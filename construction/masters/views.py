@@ -1,13 +1,13 @@
 # masters/views.py
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from django.shortcuts import get_object_or_404, render
-from .models import BrandType, EmployeeType, vendortype,EmployeeRolles
-from .forms import EmployeeType,vendortype ,BrandType,EmployeeRolles,Iteam
+from django.shortcuts import get_object_or_404, redirect, render
+from .models import BrandType, EmployeeType, vendortype,EmployeeRolles,Item
+from .forms import EmployeeType, ItemForm,vendortype ,BrandType,EmployeeRolles,Item
 from django import forms
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
-
+from django.views.decorators.http import require_POST
 
 def welcome(request):
     return render(request, 'welcome.html')
@@ -163,52 +163,68 @@ def employee_rolles_delete(request, id):
 
 # Iteam Views
 
-# List all iteams
-def iteam_list(request):
-    iteams = Iteam.objects.select_related('brand').all()
+def item_list(request):
+    """View to list all items and populate the brand dropdown."""
+    items = Item.objects.all()
     brand_types = BrandType.objects.all()  # Fetch all brands
-    return render(request, 'masters/iteam_list.html', {'iteams': iteams, 'brand_types': brand_types})
+    return render(request, 'masters/item_list.html', {
+        'items': items,
+        'brand_types': brand_types  # Pass the brands to the template
+    })
 
-# Create a new iteam
+@require_POST
+def item_create(request):
+    """View to create a new item."""
+    name = request.POST.get('name')
+    brand_id = request.POST.get('brand')  # Get the brand ID from the POST data
 
-def iteam_create(request):
+    # Validate inputs
+    if not name or not brand_id:
+        return HttpResponseBadRequest("Name and Brand are required.")
+
+    # Ensure the brand exists
+    try:
+        brand = BrandType.objects.get(id=brand_id)
+    except BrandType.DoesNotExist:
+        return HttpResponseBadRequest("Invalid Brand.")
+
+    # Create the item
+    item = Item.objects.create(name=name, brand=brand)
+
+    # Return JSON response
+    return JsonResponse({
+        'id': item.id,
+        'name': item.name,
+        'brand_name': item.brand.name,
+        'created_at': item.created_at,
+        'updated_at': item.updated_at
+    })
+
+# Update an existing item
+def item_update(request, id):
+    """View to update an existing item."""
     if request.method == 'POST':
+        item = get_object_or_404(Item, id=id)
         name = request.POST.get('name')
-        brand_id = request.POST.get('brand_id')
+        brand_id = request.POST.get('brand')  # Get the brand ID from the POST data
         brand = get_object_or_404(BrandType, id=brand_id)
-        iteam = Iteam.objects.create(name=name, brand=brand)
+        item.name = name
+        item.brand = brand
+        item.save()
         return JsonResponse({
-            'id': iteam.id,
-            'name': iteam.name,
-            'brand': iteam.brand.name,
-            'created_at': iteam.created_at,
-            'updated_at': iteam.updated_at
+            'id': item.id,
+            'name': item.name,
+            'brand_name': item.brand.name,
+            'created_at': item.created_at,
+            'updated_at': item.updated_at
         })
-    return JsonResponse({'error': 'Invalid request'}, status=400)
+    return JsonResponse({'error': 'Invalid Request'}, status=400)
 
-# Update an existing iteam
-def iteam_update(request, id):
+# Delete an item
+def item_delete(request, id):
+    """View to delete an item."""
     if request.method == 'POST':
-        iteam = get_object_or_404(Iteam, id=id)
-        name = request.POST.get('name')
-        brand_id = request.POST.get('brand_id')
-        brand = get_object_or_404(BrandType, id=brand_id)
-        iteam.name = name
-        iteam.brand = brand
-        iteam.save()
-        return JsonResponse({
-            'id': iteam.id,
-            'name': iteam.name,
-            'brand': iteam.brand.name,
-            'created_at': iteam.created_at,
-            'updated_at': iteam.updated_at
-        })
-    return JsonResponse({'error': 'Invalid request'}, status=400)
-
-# Delete an iteam
-def iteam_delete(request, id):
-    if request.method == 'POST':
-        iteam = get_object_or_404(Iteam, id=id)
-        iteam.delete()
+        item = get_object_or_404(Item, id=id)
+        item.delete()
         return JsonResponse({'success': True})
-    return JsonResponse({'error': 'Invalid request'}, status=400)
+    return JsonResponse({'error': 'Invalid Request'}, status=400)
