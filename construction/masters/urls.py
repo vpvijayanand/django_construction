@@ -14,10 +14,11 @@ urlpatterns = [
     path('employee-types/update/<int:id>/', views.employee_type_update, name='employee_type_update'),
     path('employee-types/delete/<int:id>/', views.employee_type_delete, name='employee_type_delete'),
     
-    path('Vendor-Type/', views.vendor_type_list, name='vendor_type_list'),
-    path('Vendor-Type/create/', views.vendor_type_create, name='vendor_type_create'),
-    path('Vendor-Type/update/<int:id>/', views.vendor_type_update, name='vendor_type_update'),
-    path('Vendor-Type/delete/<int:id>/', views.vendor_type_delete, name='vendor_type_delete'),
+     path('vendor_types/', views.vendor_type_list, name='vendor_type_list'),
+    path('vendor_types/create/', views.vendor_type_create, name='vendor_type_create'),
+    path('vendor_types/update/<int:id>/', views.vendor_type_update, name='vendor_type_update'),
+    path('vendor_types/delete/<int:id>/', views.vendor_type_delete, name='vendor_type_delete'),
+   
 
     path('brand-type/', views.brand_type_list, name='brand_type_list'),
     path('brand-type/create/', views.brand_type_create, name='brand_type_create'),

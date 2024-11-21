@@ -9,13 +9,6 @@ class EmployeeType(models.Model):
     def __str__(self):
         return self.name
 
-class VendorType(models.Model):
-    name = models.CharField(max_length=255)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.name
 
 class BrandType(models.Model):
     name = models.CharField(max_length=255)
@@ -26,6 +19,13 @@ class BrandType(models.Model):
         return self.name
     
 class EmployeeRolles(models.Model):
+    name = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+class vendortype(models.Model):
     name = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

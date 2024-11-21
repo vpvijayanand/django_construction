@@ -1,15 +1,15 @@
 # masters/serializers.py
 from rest_framework import serializers
-from .models import EmployeeType, VendorType ,BrandType,EmployeeRolles
+from .models import EmployeeType, vendortype ,BrandType,EmployeeRolles
 
 class EmployeeTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = EmployeeType
         fields = ['id', 'name', 'created_at', 'updated_at']
 
-class VendorTypeSerializer(serializers.ModelSerializer):
+class vendortypeSerializer(serializers.ModelSerializer):
     class Meta:
-        model = VendorType
+        model = vendortype
         fields = ['id', 'name', 'created_at', 'updated_at']
 
 class BrandTypeSerializer(serializers.ModelSerializer):

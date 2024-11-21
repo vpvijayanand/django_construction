@@ -5,3 +5,4 @@ class ClientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Client
         fields = ['id', 'name', 'mobile1', 'mobile2', 'email', 'created_at', 'updated_at']
+#  vendor_type

@@ -2,10 +2,11 @@
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.shortcuts import get_object_or_404, render
-from .models import BrandType, EmployeeType, VendorType,EmployeeRolles
-from .forms import EmployeeType, VendorType,BrandType,EmployeeRolles,Iteam
+from .models import BrandType, EmployeeType, vendortype,EmployeeRolles
+from .forms import EmployeeType,vendortype ,BrandType,EmployeeRolles,Iteam
 from django import forms
 from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
 
 
 def welcome(request):
@@ -37,36 +38,50 @@ def employee_type_delete(request, id):
         employee_type = get_object_or_404(EmployeeType, id=id)
         employee_type.delete()
         return JsonResponse({'success': True})
-    return JsonResponse({'error': 'Invalid Request'}, status=400)
+    return JsonResponse({'error': 'Invalid Request'}, status=400) 
 
-
-# Vendor Type Views
+# Vendor Type List View
+@require_http_methods(["GET"])
 def vendor_type_list(request):
-    vendor_types = VendorType.objects.all()
-    return render(request, 'masters/vendor_Type_list.html', {'Vendor_Types': vendor_types})
+    vendor_types = vendortype.objects.all()
+    return render(request, 'masters/vendor_type_list.html', {'vendor_types': vendor_types})
 
+# Vendor Type Create View
+@require_http_methods(["POST"])
 def vendor_type_create(request):
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        vendor_type = VendorType.objects.create(name=name)
-        return JsonResponse({'id': vendor_type.id, 'name': vendor_type.name, 'created_at': vendor_type.created_at, 'updated_at': vendor_type.updated_at})
-    return JsonResponse({'error': 'Invalid Request'}, status=400)
+    name = request.POST.get('name')
+    if name:
+        vendor_type = vendortype.objects.create(name=name)
+        return JsonResponse({
+            'id': vendor_type.id,
+            'name': vendor_type.name,
+            'created_at': vendor_type.created_at,
+            'updated_at': vendor_type.updated_at
+        })
+    return JsonResponse({'error': 'Name is required'}, status=400)
 
+# Vendor Type Update View
+@require_http_methods(["POST"])
 def vendor_type_update(request, id):
-    if request.method == 'POST':
-        vendor_type = get_object_or_404(VendorType, id=id)
-        name = request.POST.get('name')
+    vendor_type = get_object_or_404(vendortype, id=id)
+    name = request.POST.get('name')
+    if name:
         vendor_type.name = name
         vendor_type.save()
-        return JsonResponse({'id': vendor_type.id, 'name': vendor_type.name, 'created_at': vendor_type.created_at, 'updated_at': vendor_type.updated_at})
-    return JsonResponse({'error': 'Invalid Request'}, status=400)
+        return JsonResponse({
+            'id': vendor_type.id,
+            'name': vendor_type.name,
+            'created_at': vendor_type.created_at,
+            'updated_at': vendor_type.updated_at
+        })
+    return JsonResponse({'error': 'Name is required'}, status=400)
 
+# Vendor Type Delete View
+@require_http_methods(["POST"])
 def vendor_type_delete(request, id):
-    if request.method == 'POST':
-        vendor_type = get_object_or_404(VendorType, id=id)
-        vendor_type.delete()
-        return JsonResponse({'success': True})
-    return JsonResponse({'error': 'Invalid Request'}, status=400)
+    vendor_type = get_object_or_404(vendortype, id=id)
+    vendor_type.delete()
+    return JsonResponse({'success': True})
 
 # Brand Type Views
 

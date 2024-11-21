@@ -1,15 +1,14 @@
 # masters/forms.py
 from django import forms
-from .models import EmployeeType, VendorType ,BrandType,EmployeeRolles,Iteam
+from .models import EmployeeType, vendortype ,BrandType,EmployeeRolles,Iteam
 
 class EmployeeTypeForm(forms.ModelForm):
     class Meta:
         model = EmployeeType
         fields = ['name']
-
-class VendorTypeForm(forms.ModelForm):
+class vendortypeForm(forms.ModelForm):
     class Meta:
-        model = VendorType
+        model = vendortype
         fields = ['name']
 
 class BrandTypeForm(forms.ModelForm):
