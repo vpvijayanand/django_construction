@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from .models import BrandType, EmployeeType, vendortype,EmployeeRolles,Item
 from .forms import EmployeeType, ItemForm,vendortype ,BrandType,EmployeeRolles,Item
 from django import forms
-from django.http import JsonResponse
+from django.http import HttpResponseBadRequest, JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.http import require_POST
 
@@ -19,18 +19,32 @@ def employee_type_list(request):
 
 def employee_type_create(request):
     if request.method == 'POST':
-        name = request.POST.get('name')
+        name = request.POST.get('name', '').strip()  # Remove leading/trailing whitespace
+        if not name:  # Check if name is empty or null
+            return JsonResponse({'error': 'Name cannot be empty.'}, status=400)
         employee_type = EmployeeType.objects.create(name=name)
-        return JsonResponse({'id': employee_type.id, 'name': employee_type.name, 'created_at': employee_type.created_at, 'updated_at': employee_type.updated_at})
+        return JsonResponse({
+            'id': employee_type.id,
+            'name': employee_type.name,
+            'created_at': employee_type.created_at,
+            'updated_at': employee_type.updated_at
+        })
     return JsonResponse({'error': 'Invalid Request'}, status=400)
 
 def employee_type_update(request, id):
     if request.method == 'POST':
         employee_type = get_object_or_404(EmployeeType, id=id)
-        name = request.POST.get('name')
+        name = request.POST.get('name', '').strip()  # Remove leading/trailing whitespace
+        if not name:
+            return JsonResponse({'error': 'Name cannot be empty.'}, status=400)
         employee_type.name = name
         employee_type.save()
-        return JsonResponse({'id': employee_type.id, 'name': employee_type.name, 'created_at': employee_type.created_at, 'updated_at': employee_type.updated_at})
+        return JsonResponse({
+            'id': employee_type.id,
+            'name': employee_type.name,
+            'created_at': employee_type.created_at,
+            'updated_at': employee_type.updated_at
+        })
     return JsonResponse({'error': 'Invalid Request'}, status=400)
 
 def employee_type_delete(request, id):
@@ -49,32 +63,32 @@ def vendor_type_list(request):
 # Vendor Type Create View
 @require_http_methods(["POST"])
 def vendor_type_create(request):
-    name = request.POST.get('name')
-    if name:
-        vendor_type = vendortype.objects.create(name=name)
-        return JsonResponse({
-            'id': vendor_type.id,
-            'name': vendor_type.name,
-            'created_at': vendor_type.created_at,
-            'updated_at': vendor_type.updated_at
-        })
-    return JsonResponse({'error': 'Name is required'}, status=400)
+    name = request.POST.get('name', '').strip()  # Remove whitespace
+    if not name:
+        return JsonResponse({'error': 'Name cannot be empty.'}, status=400)
+    vendor_type = vendortype.objects.create(name=name)
+    return JsonResponse({
+        'id': vendor_type.id,
+        'name': vendor_type.name,
+        'created_at': vendor_type.created_at,
+        'updated_at': vendor_type.updated_at
+    })
 
 # Vendor Type Update View
 @require_http_methods(["POST"])
 def vendor_type_update(request, id):
     vendor_type = get_object_or_404(vendortype, id=id)
-    name = request.POST.get('name')
-    if name:
-        vendor_type.name = name
-        vendor_type.save()
-        return JsonResponse({
-            'id': vendor_type.id,
-            'name': vendor_type.name,
-            'created_at': vendor_type.created_at,
-            'updated_at': vendor_type.updated_at
-        })
-    return JsonResponse({'error': 'Name is required'}, status=400)
+    name = request.POST.get('name', '').strip()
+    if not name:
+        return JsonResponse({'error': 'Name cannot be empty.'}, status=400)
+    vendor_type.name = name
+    vendor_type.save()
+    return JsonResponse({
+        'id': vendor_type.id,
+        'name': vendor_type.name,
+        'created_at': vendor_type.created_at,
+        'updated_at': vendor_type.updated_at
+    })
 
 # Vendor Type Delete View
 @require_http_methods(["POST"])
@@ -91,7 +105,9 @@ def brand_type_list(request):
 
 def brand_type_create(request):
     if request.method == 'POST':
-        name = request.POST.get('name')
+        name = request.POST.get('name', '').strip()
+        if not name:
+            return JsonResponse({'error': 'Name cannot be empty.'}, status=400)
         brand_type = BrandType.objects.create(name=name)
         return JsonResponse({
             'id': brand_type.id,
@@ -174,13 +190,13 @@ def item_list(request):
 
 @require_POST
 def item_create(request):
-    """View to create a new item."""
-    name = request.POST.get('name')
-    brand_id = request.POST.get('brand')  # Get the brand ID from the POST data
+    name = request.POST.get('name', '').strip()  # Remove whitespace
+    brand_id = request.POST.get('brand', '').strip()  # Ensure brand_id is not null
 
-    # Validate inputs
-    if not name or not brand_id:
-        return HttpResponseBadRequest("Name and Brand are required.")
+    if not name:
+        return HttpResponseBadRequest("Name cannot be empty.")
+    if not brand_id:
+        return HttpResponseBadRequest("Brand is required.")
 
     # Ensure the brand exists
     try:
@@ -190,8 +206,6 @@ def item_create(request):
 
     # Create the item
     item = Item.objects.create(name=name, brand=brand)
-
-    # Return JSON response
     return JsonResponse({
         'id': item.id,
         'name': item.name,
@@ -200,14 +214,19 @@ def item_create(request):
         'updated_at': item.updated_at
     })
 
-# Update an existing item
 def item_update(request, id):
-    """View to update an existing item."""
     if request.method == 'POST':
         item = get_object_or_404(Item, id=id)
-        name = request.POST.get('name')
-        brand_id = request.POST.get('brand')  # Get the brand ID from the POST data
+        name = request.POST.get('name', '').strip()
+        brand_id = request.POST.get('brand', '').strip()
+
+        if not name:
+            return JsonResponse({'error': 'Name cannot be empty.'}, status=400)
+        if not brand_id:
+            return JsonResponse({'error': 'Brand is required.'}, status=400)
+
         brand = get_object_or_404(BrandType, id=brand_id)
+
         item.name = name
         item.brand = brand
         item.save()
